@@ -1,3 +1,4 @@
+import { CreateDateColumn} from "typeorm";
 export class BaseEntities {
     @CreateDateColumn({name:"created_at", nullable: false})
     createdAt: Date;
