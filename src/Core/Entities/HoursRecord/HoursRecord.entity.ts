@@ -2,10 +2,9 @@ import { Entity, BaseEntity, PrimaryGeneratedColumn, Column } from "typeorm";
 
 @Entity('HoursRecord')
 export class HoursRecord extends BaseEntity {
-  @PrimaryGeneratedColumn (
-    {
-        name: 'id',
-    })
+@PrimaryGeneratedColumn ({
+    name: 'id',
+})
 id: number;
 @Column({
     name: 'day',
