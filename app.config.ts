@@ -6,3 +6,4 @@ export const CONFIGURATION = {
     DATABASE: "HoursTracker",
     APIBASEURL:"http://localhost:3001"
 }
+//teste

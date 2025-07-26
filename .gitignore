@@ -10,7 +10,7 @@ logs/
 .env
 .env.*.local
 .env.local
-app.config
+app.config.ts
 
 coverage/
 
