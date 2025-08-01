@@ -1,13 +1,14 @@
 import { Module } from '@nestjs/common';
-import { AppService } from './app.service';
 import { AddControllers } from './API/Extensions/AddControllers';
 import { AddProfiles } from './API/Extensions/AddProfiles';
 import AddProviders from './API/Extensions/AddProviders';
 import RepositoriesStartup from './API/Extensions/AddRepositories';
 import ServicesStartup, { AllServicesInjects } from './API/Extensions/AddService';
+import { AppService } from './Infrastructure/Service/app.service';
+import { DatabaseModule } from './Infrastructure/Database/database.module';
 
 @Module({
-  imports: [],
+  imports: [DatabaseModule],
   controllers: [...AddControllers],
   providers: [
     AppService,
