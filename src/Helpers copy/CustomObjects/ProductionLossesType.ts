@@ -1,0 +1,1 @@
+export type ProductionLosseType = "SUPPLIE"|"EXPEDITION"|"PLANTING";
