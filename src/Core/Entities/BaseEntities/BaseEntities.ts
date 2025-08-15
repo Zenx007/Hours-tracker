@@ -1,13 +1,13 @@
-import { CreateDateColumn} from "typeorm";
+import { Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
 export class BaseEntities {
     @CreateDateColumn({name:"created_at", nullable: false})
     createdAt: Date;
     
-    @CreateDateColumn({name:"updated_at", nullable: false})
+    @UpdateDateColumn({name:"updated_at", nullable: false})
     updatedAt: Date;
 
-    @CreateDateColumn({nullable:true,name:"disabled_at"})
-    disabledAt?: Date;
+    @Column({nullable:true, name:"disabled_at", type: "timestamp"})
+    disabledAt?: Date | null;
 
     Disable(){
         this.disabledAt = new Date();

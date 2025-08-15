@@ -1,7 +1,8 @@
 import { Entity, BaseEntity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { BaseEntities } from "../BaseEntities/BaseEntities";
 
 @Entity('HoursRecord')
-export class HoursRecord extends BaseEntity {
+export class HoursRecord extends BaseEntities {
 @PrimaryGeneratedColumn ({
     name: 'id',
 })
@@ -9,7 +10,7 @@ id: number;
 @Column({
     name: 'day',
     type: 'date',
-    nullable: false
+    nullable: false,
 })
 date:Date;
 @Column({
@@ -17,24 +18,31 @@ date:Date;
     type: 'time',
     nullable: false,
 })
-startTime: string;
+startTime: Date;
 @Column({
     name: 'end_time',
     type: 'time',
-    nullable: false,
+    nullable: true,
 })
-endTime: string;
+endTime: Date;
 @Column({
     name: 'total_hours',
     type: 'decimal',
-    nullable: false
+    nullable: true,
 })
-totalHours: number;
+totalHours: Date;
 @Column({
     name: 'where_to_place',
     type: 'varchar',
     length: 255,
-    nullable: false
+    nullable: true,
 })
 whereToPlace: string;
+@Column({
+    name: 'daily_resume',
+    type: 'varchar',
+    length: 255,
+    nullable: true,
+})
+dailyResume: string;
 }
