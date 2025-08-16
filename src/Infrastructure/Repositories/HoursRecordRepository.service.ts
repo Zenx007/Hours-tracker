@@ -56,6 +56,17 @@ export class HoursRecordRepository extends IHoursRecordRepository{
     }
 
     async GetAll(): Task<List<HoursRecord>> {
-        throw new Error("Method not implemented.");
+        try {
+            const list: List<HoursRecord> = await this._hoursDbContext.find({
+                where: {
+                    disabledAt: IsNull(),
+                },
+            });
+
+            return list;
+        }
+        catch {
+            return null;
+        }
     }
 }
