@@ -1,4 +1,5 @@
 import { Inject, Injectable, Res } from "@nestjs/common";
+import { MODULE_PATH } from "@nestjs/common/constants";
 import { HoursRecord } from "src/Core/Entities/HoursRecord/HoursRecord.entity";
 import { IHoursRecordRepository } from "src/Core/RepositoriesInterfaces/IHoursRecordRepository.interface";
 import { List } from "src/Helpers/CustomObjects/List.Interface";
@@ -34,7 +35,26 @@ export class HoursRecordRepository extends IHoursRecordRepository{
     }
 
     async Update(model: HoursRecord): Task<Result<number>> {
-       throw new Error("Method not implemented.");
+       try {
+        const hours: HoursRecord = await this.GetById(model.id);
+        if(hours == null) 
+            return Result.Fail("Erro");
+
+        hours.startTime = model.startTime;
+        hours.endTime = model.endTime;
+        hours.dailyResume = model.dailyResume;
+        hours.date = model.date;
+        hours.totalHours = model.totalHours;
+        hours.whereToPlace = model.whereToPlace;
+        hours.updatedAt = new Date();
+
+        const saved = await this._hoursDbContext.save(hours);
+
+        return Result.Ok(hours.id);
+       }
+       catch(error) {
+        return Result.Fail("Erro");
+       }
     }
     async Delete(id: number): Task<Result> {
         throw new Error("Method not implemented.");
