@@ -6,9 +6,9 @@ import { Module } from "@nestjs/common";
 
 @Module({})
 export abstract class IHoursRecordRepository {
-    abstract Insert (model: HoursRecord): Task<Result<number>>;
-    abstract Update (model: HoursRecord): Task<Result<number>>;
-    abstract Delete (id: number): Task<Result>;
-    abstract GetById (id: number): Task<HoursRecord>;
-    abstract GetAll (): Task<List<HoursRecord>>;
+    abstract InsertAsync (model: HoursRecord): Task<Result<number>>;
+    abstract UpdateAsync (model: HoursRecord): Task<Result<number>>;
+    abstract DeleteAsync (id: number): Task<Result>;
+    abstract FindByIdAsync (id: number): Task<HoursRecord>;
+    abstract FindAllAsync (): Task<List<HoursRecord>>;
 }

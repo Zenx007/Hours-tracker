@@ -3,6 +3,7 @@ import { MODULE_PATH } from "@nestjs/common/constants";
 import { catchError } from "rxjs";
 import { HoursRecord } from "src/Core/Entities/HoursRecord/HoursRecord.entity";
 import { IHoursRecordRepository } from "src/Core/RepositoriesInterfaces/IHoursRecordRepository.interface";
+import { ConstantsMessagesHoursRecord } from "src/Helpers/ConstantsMessages/ConstantsMessages";
 import { List } from "src/Helpers/CustomObjects/List.Interface";
 import { Result } from "src/Helpers/CustomObjects/Result";
 import { Task } from 'src/Helpers/CustomObjects/Task.Interface';
@@ -20,7 +21,7 @@ export class HoursRecordRepository extends IHoursRecordRepository{
         this._hoursDbContext = this.hoursDbContext;
     }
 
-    async Insert(model: HoursRecord): Task<Result<number>> {
+    async InsertAsync(model: HoursRecord): Task<Result<number>> {
         try {
             model.createdAt = new Date();
             model.updatedAt = new Date();
@@ -31,15 +32,15 @@ export class HoursRecordRepository extends IHoursRecordRepository{
             return Result.Ok(result.id);
         }
         catch (error) {
-            return Result.Fail("Error");
+            return Result.Fail(ConstantsMessagesHoursRecord.ErrorInsert);
         }
     }
 
-    async Update(model: HoursRecord): Task<Result<number>> {
+    async UpdateAsync (model: HoursRecord): Task<Result<number>> {
        try {
-        const hours: HoursRecord = await this.GetById(model.id);
+        const hours: HoursRecord = await this.FindByIdAsync(model.id);
         if(hours == null) 
-            return Result.Fail("Erro");
+            return Result.Fail(ConstantsMessagesHoursRecord.ErrorFindById);
 
         hours.startTime = model.startTime;
         hours.endTime = model.endTime;
@@ -54,14 +55,14 @@ export class HoursRecordRepository extends IHoursRecordRepository{
         return Result.Ok(hours.id);
        }
        catch(error) {
-        return Result.Fail("Erro");
+        return Result.Fail(ConstantsMessagesHoursRecord.ErrorUpdate);
        }
     }
-    async Delete(id: number): Task<Result> {
+    async DeleteAsync (id: number): Task<Result> {
         try {
-            const hours: HoursRecord = await this.GetById(id);
+            const hours: HoursRecord = await this.FindByIdAsync(id);
             if(hours == null) 
-                return Result.Fail("Erro")
+                return Result.Fail(ConstantsMessagesHoursRecord.ErrorFindById)
 
             hours.disabledAt = new Date();
 
@@ -70,11 +71,11 @@ export class HoursRecordRepository extends IHoursRecordRepository{
             return Result.Ok();
         }
         catch(error) {
-            return Result.Fail("Erro");
+            return Result.Fail(ConstantsMessagesHoursRecord.ErrorDelete);
         }
     }
 
-    async GetById(id: number): Task<HoursRecord> {
+    async FindByIdAsync(id: number): Task<HoursRecord> {
         try {
             const hours: HoursRecord = await this._hoursDbContext.findOne({
                 where: { disabledAt: IsNull(),
@@ -89,7 +90,7 @@ export class HoursRecordRepository extends IHoursRecordRepository{
         }
     }
 
-    async GetAll(): Task<List<HoursRecord>> {
+    async FindAllAsync(): Task<List<HoursRecord>> {
         try {
             const list: List<HoursRecord> = await this._hoursDbContext.find({
                 where: {
