@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { HoursRecord } from "src/Core/Entities/HoursRecord/HoursRecord.entity";
 import { IHoursRecordService } from "src/Core/ServicesInterfaces/IHoursRecordService.interface";
+import { ConstantsMessagesHoursRecord } from "src/Helpers/ConstantsMessages/ConstantsMessages";
 import { List } from "src/Helpers/CustomObjects/List.Interface";
 import { Result } from "src/Helpers/CustomObjects/Result";
 import { Task } from "src/Helpers/CustomObjects/Task.Interface";
@@ -17,8 +18,12 @@ export class HoursRecordService extends IHoursRecordService {
         this._hoursRepo = this.hoursRepo;
     }
 
-    CreateAsync(model: HoursRecord): Task<Result<HoursRecord>> {
-        throw new Error("Method not implemented.");
+    async CreateAsync(model: HoursRecord): Task<Result<HoursRecord>> {
+        try {
+        }
+        catch (error) {
+            return Result.Fail(ConstantsMessagesHoursRecord.ErrorCreate)
+        }
     }
     UpdateAsync(model: HoursRecord): Task<Result<HoursRecord>> {
         throw new Error("Method not implemented.");
