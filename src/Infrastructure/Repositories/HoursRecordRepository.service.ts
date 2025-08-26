@@ -21,7 +21,7 @@ export class HoursRecordRepository extends IHoursRecordRepository{
         this._hoursDbContext = this.hoursDbContext;
     }
 
-    async InsertAsync(model: HoursRecord): Task<Result<number>> {
+    async InsertAsync(model: HoursRecord): Task<Result<HoursRecord>> {
         try {
             model.createdAt = new Date();
             model.updatedAt = new Date();
@@ -29,7 +29,7 @@ export class HoursRecordRepository extends IHoursRecordRepository{
 
             const result = await this._hoursDbContext.save(model);
             
-            return Result.Ok(result.id);
+            return Result.Ok(result);
         }
         catch (error) {
             return Result.Fail(ConstantsMessagesHoursRecord.ErrorInsert);

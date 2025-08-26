@@ -1,9 +1,7 @@
-
-import {createMap, forMember, mapFrom, Mapper, MappingProfile } from "@automapper/core";
-import { AutomapperProfile } from "@automapper/nestjs/src/lib/automapper-profile";
-import { InjectMapper } from "@automapper/nestjs/src/lib/di/inject-mapper";
+import { createMap, forMember, mapFrom, Mapper, MappingProfile } from "@automapper/core";
 import { HoursRecord } from "../Entities/HoursRecord/HoursRecord.entity";
 import { HoursRecordVO } from "src/Communication/ViewObjects/HoursRecord/HoursRecordVO";
+import { AutomapperProfile, InjectMapper } from "@automapper/nestjs";
 
 export class HoursRecordProfile extends AutomapperProfile {
       constructor(@InjectMapper() mapper: Mapper) {

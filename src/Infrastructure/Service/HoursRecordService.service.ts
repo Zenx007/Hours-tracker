@@ -1,5 +1,8 @@
-import { Injectable } from "@nestjs/common";
+import { Mapper } from "@automapper/core";
+import { Injectable, Res } from "@nestjs/common";
+import { HoursRecordVO } from "src/Communication/ViewObjects/HoursRecord/HoursRecordVO";
 import { HoursRecord } from "src/Core/Entities/HoursRecord/HoursRecord.entity";
+import { IHoursRecordRepository } from "src/Core/RepositoriesInterfaces/IHoursRecordRepository.interface";
 import { IHoursRecordService } from "src/Core/ServicesInterfaces/IHoursRecordService.interface";
 import { ConstantsMessagesHoursRecord } from "src/Helpers/ConstantsMessages/ConstantsMessages";
 import { List } from "src/Helpers/CustomObjects/List.Interface";
@@ -8,33 +11,45 @@ import { Task } from "src/Helpers/CustomObjects/Task.Interface";
 
 @Injectable()
 export class HoursRecordService extends IHoursRecordService {
-    private readonly _hoursRepo: IHoursRecordService;
+    private readonly _hoursRepo: IHoursRecordRepository;
+    private readonly _mapper: Mapper;
 
     constructor (
-        private readonly hoursRepo: IHoursRecordService,
+        private readonly hoursRepo: IHoursRecordRepository,
+        private readonly mapper: Mapper,
 
     ) {
         super();
         this._hoursRepo = this.hoursRepo;
+        this._mapper = this.mapper;
     }
 
-    async CreateAsync(model: HoursRecord): Task<Result<HoursRecord>> {
+    async CreateAsync(model: HoursRecordVO): Task<Result<HoursRecordVO>> {
         try {
+            const hours = this._mapper.map(model, HoursRecordVO, HoursRecord);
+
+            const saved = await this._hoursRepo.InsertAsync(hours);
+            if(saved.isFailed)
+                return Result.Fail(ConstantsMessagesHoursRecord.ErrorCreate);
+
+            const response = this._mapper.map(saved.value, HoursRecord, HoursRecordVO);
+            
+            return Result.Ok(response);
         }
         catch (error) {
             return Result.Fail(ConstantsMessagesHoursRecord.ErrorCreate)
         }
     }
-    UpdateAsync(model: HoursRecord): Task<Result<HoursRecord>> {
+    UpdateAsync(model: HoursRecordVO): Task<Result<HoursRecordVO>> {
         throw new Error("Method not implemented.");
     }
     DeleteAsync(id: number): Task<Result> {
         throw new Error("Method not implemented.");
     }
-    GetById(id: number): Task<Result<HoursRecord>> {
+    GetById(id: number): Task<Result<HoursRecordVO>> {
         throw new Error("Method not implemented.");
     }
-    GetAll(): Task<List<HoursRecord>> {
+    GetAll(): Task<List<HoursRecordVO>> {
         throw new Error("Method not implemented.");
     }
 
