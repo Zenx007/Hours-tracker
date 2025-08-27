@@ -1,4 +1,5 @@
 import { Mapper } from "@automapper/core";
+import { InjectMapper } from "@automapper/nestjs";
 import { Injectable, Res } from "@nestjs/common";
 import { HoursRecordVO } from "src/Communication/ViewObjects/HoursRecord/HoursRecordVO";
 import { HoursRecord } from "src/Core/Entities/HoursRecord/HoursRecord.entity";
@@ -13,15 +14,16 @@ import { Task } from "src/Helpers/CustomObjects/Task.Interface";
 export class HoursRecordService extends IHoursRecordService {
     private readonly _hoursRepo: IHoursRecordRepository;
     private readonly _mapper: Mapper;
-
+    
     constructor(
         private readonly hoursRepo: IHoursRecordRepository,
+        @InjectMapper()
         private readonly mapper: Mapper,
 
     ) {
         super();
-        this._hoursRepo = this.hoursRepo;
         this._mapper = this.mapper;
+        this._hoursRepo = this.hoursRepo;
     }
 
     async CreateAsync(model: HoursRecordVO): Task<Result<HoursRecordVO>> {
@@ -92,8 +94,19 @@ export class HoursRecordService extends IHoursRecordService {
             return Result.Fail(ConstantsMessagesHoursRecord.ErrorPrepare)
         }
     }
-    GetAll(): Task<List<HoursRecordVO>> {
-        throw new Error("Method not implemented.");
+    async GetAll(): Task<Result<List<HoursRecordVO>>> {
+        try {
+            const list: List<HoursRecord> = await this._hoursRepo.FindAllAsync();
+            if(list == null)
+                return Result.Fail(ConstantsMessagesHoursRecord.ErrorGetAll)
+
+            const response = this._mapper.mapArray(list, HoursRecord, HoursRecordVO);
+
+            return Result.Ok(response);
+        }
+        catch(error) {
+            return Result.Fail(ConstantsMessagesHoursRecord.ErrorGetAll)
+        }
     }
 
 }

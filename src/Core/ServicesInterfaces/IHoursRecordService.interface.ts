@@ -11,6 +11,6 @@ export abstract class IHoursRecordService {
     abstract UpdateAsync (model: HoursRecordVO): Task<Result<HoursRecordVO>>;
     abstract DeleteAsync(id: number): Task<Result>;
     abstract GetById (id: number): Task<Result<HoursRecordVO>>;
-    abstract GetAll (): Task<List<HoursRecordVO>>;
+    abstract GetAll (): Task<Result<List<HoursRecordVO>>>;
 
 }
