@@ -8,7 +8,7 @@ export const ConstantsMessagesHoursRecord = {
     ErrorPut: "Erro ao atulizar o registro de horas",
     ErrorDelete: "Erro ao deletar o registro de erros",
     ErrorPrepare: "Erro ao encontrar o registro de horas",
-    ErrorGetAll: "Erro ao encontrar a lista de registro de horas",
+    ErrorGetAll: "Erro ao encontrar a lista de registro de horas",  
     ErrorNotFound: "Erro, o registro de horas não existe",
 
 

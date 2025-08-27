@@ -14,7 +14,7 @@ export class HoursRecordService extends IHoursRecordService {
     private readonly _hoursRepo: IHoursRecordRepository;
     private readonly _mapper: Mapper;
 
-    constructor (
+    constructor(
         private readonly hoursRepo: IHoursRecordRepository,
         private readonly mapper: Mapper,
 
@@ -29,11 +29,11 @@ export class HoursRecordService extends IHoursRecordService {
             const hours = this._mapper.map(model, HoursRecordVO, HoursRecord);
 
             const saved = await this._hoursRepo.InsertAsync(hours);
-            if(saved.isFailed)
+            if (saved.isFailed)
                 return Result.Fail(ConstantsMessagesHoursRecord.ErrorCreate);
 
             const response = this._mapper.map(saved.value, HoursRecord, HoursRecordVO);
-            
+
             return Result.Ok(response);
         }
         catch (error) {
@@ -42,41 +42,55 @@ export class HoursRecordService extends IHoursRecordService {
     }
     async UpdateAsync(model: HoursRecordVO): Task<Result<HoursRecordVO>> {
         try {
-            if(model.id < 0 || model.id == null)
+            if (model.id < 0 || model.id == null)
                 return Result.Fail(ConstantsMessagesHoursRecord.ErrorNotFound)
 
             const hoursUpdate = this._mapper.map(model, HoursRecordVO, HoursRecord);
 
             const update = await this._hoursRepo.UpdateAsync(hoursUpdate);
-            if(update.isFailed)
+            if (update.isFailed)
                 return Result.Fail(ConstantsMessagesHoursRecord.ErrorPut);
 
             const response = this._mapper.map(update.value, HoursRecord, HoursRecordVO)
 
             return Result.Ok(response)
         }
-        catch(error) {
+        catch (error) {
             return Result.Fail(ConstantsMessagesHoursRecord.ErrorPut)
         }
     }
     async DeleteAsync(id: number): Task<Result> {
         try {
             const hoursDelete = await this._hoursRepo.FindByIdAsync(id);
-            if(hoursDelete ==null)
+            if (hoursDelete == null)
                 return Result.Fail(ConstantsMessagesHoursRecord.ErrorNotFound);
 
             const response = await this._hoursRepo.DeleteAsync(id);
-            if(response.isFailed)
+            if (response.isFailed)
                 return Result.Fail(ConstantsMessagesHoursRecord.ErrorDelete)
 
             return Result.Ok();
         }
-        catch(error) {
+        catch (error) {
             return Result.Fail(ConstantsMessagesHoursRecord.ErrorDelete)
         }
     }
-    GetById(id: number): Task<Result<HoursRecordVO>> {
-        throw new Error("Method not implemented.");
+    async GetById(id: number): Task<Result<HoursRecordVO>> {
+        try {
+            if(id < 0 || id == null)
+                return Result.Fail(ConstantsMessagesHoursRecord.ErrorNotFound);
+                
+            const hours = await this._hoursRepo.FindByIdAsync(id);
+            if(hours == null)
+                return Result.Fail(ConstantsMessagesHoursRecord.ErrorPrepare)
+
+            const response = this._mapper.map(hours, HoursRecord, HoursRecordVO);
+
+            return Result.Ok(response)
+        }
+        catch (error) {
+            return Result.Fail(ConstantsMessagesHoursRecord.ErrorPrepare)
+        }
     }
     GetAll(): Task<List<HoursRecordVO>> {
         throw new Error("Method not implemented.");
