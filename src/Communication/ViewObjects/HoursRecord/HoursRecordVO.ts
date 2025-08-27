@@ -3,6 +3,10 @@ import { NameColumn } from "src/Helpers/CustomDecorators/ListFrontVO.decorator";
 
 export class HoursRecordVO {
     @ApiProperty()
+    @NameColumn("Id")
+    id: number;
+    
+    @ApiProperty()
     @NameColumn("Data")
     date: Date;
 

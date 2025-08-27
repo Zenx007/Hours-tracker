@@ -40,8 +40,24 @@ export class HoursRecordService extends IHoursRecordService {
             return Result.Fail(ConstantsMessagesHoursRecord.ErrorCreate)
         }
     }
-    UpdateAsync(model: HoursRecordVO): Task<Result<HoursRecordVO>> {
-        throw new Error("Method not implemented.");
+    async UpdateAsync(model: HoursRecordVO): Task<Result<HoursRecordVO>> {
+        try {
+            if(model.id < 0 || model.id == null)
+                return Result.Fail(ConstantsMessagesHoursRecord.ErrorNotFound)
+
+            const hoursUpdate = this._mapper.map(model, HoursRecordVO, HoursRecord);
+
+            const update = await this._hoursRepo.UpdateAsync(hoursUpdate);
+            if(update.isFailed)
+                return Result.Fail(ConstantsMessagesHoursRecord.ErrorPut);
+
+            const response = this._mapper.map(update.value, HoursRecord, HoursRecordVO)
+
+            return Result.Ok(response)
+        }
+        catch(error) {
+            return Result.Fail(ConstantsMessagesHoursRecord.ErrorPut)
+        }
     }
     DeleteAsync(id: number): Task<Result> {
         throw new Error("Method not implemented.");

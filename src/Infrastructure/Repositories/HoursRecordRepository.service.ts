@@ -36,7 +36,7 @@ export class HoursRecordRepository extends IHoursRecordRepository{
         }
     }
 
-    async UpdateAsync (model: HoursRecord): Task<Result<number>> {
+    async UpdateAsync (model: HoursRecord): Task<Result<HoursRecord>> {
        try {
         const hours: HoursRecord = await this.FindByIdAsync(model.id);
         if(hours == null) 
@@ -52,7 +52,7 @@ export class HoursRecordRepository extends IHoursRecordRepository{
 
         const saved = await this._hoursDbContext.save(hours);
 
-        return Result.Ok(hours.id);
+        return Result.Ok(saved);
        }
        catch(error) {
         return Result.Fail(ConstantsMessagesHoursRecord.ErrorUpdate);
@@ -71,7 +71,7 @@ export class HoursRecordRepository extends IHoursRecordRepository{
             return Result.Ok();
         }
         catch(error) {
-            return Result.Fail(ConstantsMessagesHoursRecord.ErrorDelete);
+            return Result.Fail(ConstantsMessagesHoursRecord.ErrorDisable);
         }
     }
 

@@ -14,6 +14,10 @@ export class HoursRecordProfile extends AutomapperProfile {
                 HoursRecord, 
                 HoursRecordVO,
                 forMember(
+                    (d) => d.id,
+                    mapFrom((s) => s.id)
+                ),
+                forMember(
                     (d) => d.startTime,
                     mapFrom((s) => s.startTime)
                 ),
