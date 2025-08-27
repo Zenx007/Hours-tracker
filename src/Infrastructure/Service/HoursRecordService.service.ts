@@ -59,8 +59,21 @@ export class HoursRecordService extends IHoursRecordService {
             return Result.Fail(ConstantsMessagesHoursRecord.ErrorPut)
         }
     }
-    DeleteAsync(id: number): Task<Result> {
-        throw new Error("Method not implemented.");
+    async DeleteAsync(id: number): Task<Result> {
+        try {
+            const hoursDelete = await this._hoursRepo.FindByIdAsync(id);
+            if(hoursDelete ==null)
+                return Result.Fail(ConstantsMessagesHoursRecord.ErrorNotFound);
+
+            const response = await this._hoursRepo.DeleteAsync(id);
+            if(response.isFailed)
+                return Result.Fail(ConstantsMessagesHoursRecord.ErrorDelete)
+
+            return Result.Ok();
+        }
+        catch(error) {
+            return Result.Fail(ConstantsMessagesHoursRecord.ErrorDelete)
+        }
     }
     GetById(id: number): Task<Result<HoursRecordVO>> {
         throw new Error("Method not implemented.");

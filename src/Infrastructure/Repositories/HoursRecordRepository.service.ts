@@ -61,8 +61,6 @@ export class HoursRecordRepository extends IHoursRecordRepository{
     async DeleteAsync (id: number): Task<Result> {
         try {
             const hours: HoursRecord = await this.FindByIdAsync(id);
-            if(hours == null) 
-                return Result.Fail(ConstantsMessagesHoursRecord.ErrorFindById)
 
             hours.disabledAt = new Date();
 
