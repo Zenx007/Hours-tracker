@@ -1,4 +1,5 @@
 export const ConstantsMessagesHoursRecord = {
+    //Error Messages
     ErrorInsert: "Erro ao inserir o registro de horas no banco de dados",
     ErrorUpdate: "Erro ao atualizar o registro de horas no banco de dados",
     ErrorDisable: "Erro ao deletar o registro de horas no banco de dados",
@@ -11,5 +12,6 @@ export const ConstantsMessagesHoursRecord = {
     ErrorGetAll: "Erro ao encontrar a lista de registro de horas",  
     ErrorNotFound: "Erro, o registro de horas não existe",
 
+    //Success Messages
 
 }
