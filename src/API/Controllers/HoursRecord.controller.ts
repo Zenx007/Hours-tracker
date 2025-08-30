@@ -1,9 +1,12 @@
-import { Controller, Get, Post, Req, Res, Body, Query, Request } from "@nestjs/common";
-import { ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { Response, Request } from 'express';
 import { HoursRecordVO } from "src/Communication/ViewObjects/HoursRecord/HoursRecordVO";
 import { IHoursRecordService } from "src/Core/ServicesInterfaces/IHoursRecordService.interface";
 import { ConstantsMessagesHoursRecord } from "src/Helpers/ConstantsMessages/ConstantsMessages";
 import { StatusCode, StatusCodes } from "src/Helpers/StatusCode/StatusCode";
+import { Controller, Get, Req, Res } from '@nestjs/common';
+import { List } from 'src/Helpers/CustomObjects/List.Interface';
+import { ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
+import { ApiResponse } from "src/Helpers/CustomObjects/ApiResponse.interface";
 
 @Controller('HoursRecord')
 export class HoursRecordController {
@@ -40,7 +43,8 @@ export class HoursRecordController {
       return StatusCode(
         res,
         StatusCodes.STATUS_500_INTERNAL_SERVER_ERROR,
-        response,
-      );
+        response,)
     }
 }
+}
+

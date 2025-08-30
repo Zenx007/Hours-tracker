@@ -6,9 +6,15 @@ import RepositoriesStartup from './API/Extensions/AddRepositories';
 import ServicesStartup, { AllServicesInjects } from './API/Extensions/AddService';
 import { AppService } from './Infrastructure/Service/app.service';
 import { DatabaseModule } from './Infrastructure/Database/database.module';
+import { AutomapperModule } from '@automapper/nestjs';
+import { classes } from '@automapper/classes';
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule,
+  AutomapperModule.forRoot({
+      strategyInitializer: classes(),
+    })
+  ],
   controllers: [...AddControllers],
   providers: [
     AppService,
