@@ -95,6 +95,7 @@ async PrepareAsync (
   const response = new ApiResponse<HoursRecordVO>();
   try {
     const result = await this._hoursService.GetById(id);
+
     if(result.isFailed) {
       response.object = null,
       response.message = ConstantsMessagesHoursRecord.ErrorPrepare;
@@ -106,7 +107,7 @@ async PrepareAsync (
     response.object = result.value,
     response.success = true;
 
-    return StatusCode(res, StatusCodes.STATUS_200_OK, response);``
+    return StatusCode(res, StatusCodes.STATUS_200_OK, response);
   }
   catch(error) {
     response.message = ConstantsMessagesHoursRecord.ErrorPrepare,
@@ -114,6 +115,39 @@ async PrepareAsync (
     response.success = false;
 
     return StatusCode(res, StatusCodes.STATUS_400_BAD_REQUEST, response);
+  }
+}
+
+@ApiOperation({summary: 'Update - Metodo que atualiza um registro de horas'})
+@Post('Update')
+async UpdateAsync(
+  @Res () res : Response,
+  @Req () req : Request,
+  @Body() model: HoursRecordVO,
+) {
+  const response = new ApiResponse<HoursRecordVO>();
+  try {
+    const result = await this._hoursService.UpdateAsync(model);
+
+    if(result.isFailed) {
+      response.object = null,
+      response.message = ConstantsMessagesHoursRecord.ErrorUpdate,
+      response.success = false;
+
+      return StatusCode(res, StatusCodes.STATUS_400_BAD_REQUEST)
+    }
+
+    response.object = result.value,
+    response.success = true;
+
+    return StatusCode(res, StatusCodes.STATUS_200_OK, response);
+  }
+  catch(error) {
+    response.object = null,
+    response.message = ConstantsMessagesHoursRecord.ErrorUpdate;
+    response.success = false;
+
+    return StatusCode(res, StatusCodes.STATUS_500_INTERNAL_SERVER_ERROR, response);
   }
 }
 }
