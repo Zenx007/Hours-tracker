@@ -1,4 +1,4 @@
-import { Response, Request } from 'express';
+import { Response, Request, response } from 'express';
 import { HoursRecordVO } from "src/Communication/ViewObjects/HoursRecord/HoursRecordVO";
 import { IHoursRecordService } from "src/Core/ServicesInterfaces/IHoursRecordService.interface";
 import { ConstantsMessagesHoursRecord } from "src/Helpers/ConstantsMessages/ConstantsMessages";
@@ -81,6 +81,39 @@ async CreateAsync (
     response.success = false;
 
     return StatusCode(res, StatusCodes.STATUS_500_INTERNAL_SERVER_ERROR, response);
+  }
+}
+
+@ApiOperation({summary: 'Prepare - Metodo que prepara um registro de horas'})
+@Get('Prepare')
+async PrepareAsync (
+  @Res() res : Response,
+  @Req() req : Request,
+  @Query('id') id : number,
+)
+{
+  const response = new ApiResponse<HoursRecordVO>();
+  try {
+    const result = await this._hoursService.GetById(id);
+    if(result.isFailed) {
+      response.object = null,
+      response.message = ConstantsMessagesHoursRecord.ErrorPrepare;
+      response.success = false;
+
+      return StatusCode(res, StatusCodes.STATUS_400_BAD_REQUEST, response);
+    }
+
+    response.object = result.value,
+    response.success = true;
+
+    return StatusCode(res, StatusCodes.STATUS_200_OK, response);``
+  }
+  catch(error) {
+    response.message = ConstantsMessagesHoursRecord.ErrorPrepare,
+    response.object = null,
+    response.success = false;
+
+    return StatusCode(res, StatusCodes.STATUS_400_BAD_REQUEST, response);
   }
 }
 }
