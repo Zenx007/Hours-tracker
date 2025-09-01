@@ -9,6 +9,7 @@ import { ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import { ApiResponse } from "src/Helpers/CustomObjects/ApiResponse.interface";
 import { RESPONSE_PASSTHROUGH_METADATA } from '@nestjs/common/constants';
 import { Stats } from 'fs';
+import { Result } from 'src/Helpers/CustomObjects/Result';
 
 @Controller('HoursRecord')
 export class HoursRecordController {
@@ -148,6 +149,40 @@ async UpdateAsync(
     response.success = false;
 
     return StatusCode(res, StatusCodes.STATUS_500_INTERNAL_SERVER_ERROR, response);
+  }
+}
+
+@ApiOperation({summary: 'Delete - Metodo que deleta um registro de hora'})
+@Get('Delete')
+async DeleteAsync (
+  @Res() res : Response,
+  @Req() req : Request,
+  @Query('id') id : number,
+)
+{
+  const response = new ApiResponse<Result>();
+  try {
+    const result = await this._hoursService.DeleteAsync(id);
+
+    if(result.isFailed) {
+      response.object = null,
+      response.message = ConstantsMessagesHoursRecord.ErrorDelete;
+      response.success = false;
+
+      return StatusCode(res, StatusCodes.STATUS_400_BAD_REQUEST, response);
+    }
+
+    response.object = result,
+    response.success = true;
+
+    return StatusCode(res, StatusCodes.STATUS_200_OK, response);
+  }
+  catch(error) {
+    response.message = ConstantsMessagesHoursRecord.ErrorDelete,
+    response.object = null,
+    response.success = false;
+
+    return StatusCode(res, StatusCodes.STATUS_400_BAD_REQUEST, response);
   }
 }
 }
