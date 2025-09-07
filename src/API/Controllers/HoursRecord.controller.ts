@@ -11,7 +11,7 @@ import { RESPONSE_PASSTHROUGH_METADATA } from '@nestjs/common/constants';
 import { Stats } from 'fs';
 import { Result } from 'src/Helpers/CustomObjects/Result';
 
-@Controller('HoursRecord')
+@Controller("HoursRecord")
 export class HoursRecordController {
   constructor(
     private readonly _hoursService: IHoursRecordService,
