@@ -46,7 +46,6 @@ export class HoursRecordRepository extends IHoursRecordRepository{
         hours.endTime = model.endTime;
         hours.dailyResume = model.dailyResume;
         hours.date = model.date;
-        hours.totalHours = model.totalHours;
         hours.whereToPlace = model.whereToPlace;
         hours.updatedAt = new Date();
 

@@ -16,11 +16,11 @@ export class HoursRecordVO {
 
     @ApiProperty()
     @NameColumn("Hora de termíno")
-    entTime: Date;
+    endTime: Date;
 
     @ApiProperty()
     @NameColumn("Total de horas trabalhadas")
-    totalHours: Date;
+    totalHours: string;
 
     @ApiProperty()
     @NameColumn("Onde lançar")
@@ -28,5 +28,5 @@ export class HoursRecordVO {
 
     @ApiProperty()
     @NameColumn("Resumo para a daily")
-    dailyResum: string;
+    dailyResume: string;
 }

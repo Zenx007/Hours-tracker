@@ -25,12 +25,7 @@ startTime: Date;
     nullable: true,
 })
 endTime: Date;
-@Column({
-    name: 'total_hours',
-    type: 'decimal',
-    nullable: true,
-})
-totalHours: Date;
+
 @Column({
     name: 'where_to_place',
     type: 'varchar',

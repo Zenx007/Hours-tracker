@@ -23,24 +23,49 @@ export class HoursRecordProfile extends AutomapperProfile {
                 ),
                 forMember(
                     (d) => d.date,
-                    mapFrom((d) => d.date)
+                    mapFrom((s) => s.date)
                 ),
                 forMember(
-                    (d) => d.dailyResum,
-                    mapFrom((d) => d.dailyResume)
+                    (d) => d.dailyResume,
+                    mapFrom((s) => s.dailyResume)
                 ),
                 forMember(
-                    (d) => d.entTime,
-                    mapFrom((d) => d.endTime)
-                ),
-                forMember(
-                    (d) => d.totalHours,
-                    mapFrom((d) => d.totalHours)
+                    (d) => d.endTime,
+                    mapFrom((s) => s.endTime)
                 ),
                 forMember(
                     (d) => d.whereToPlace,
-                    mapFrom((d) => d.whereToPlace)
+                    mapFrom((s) => s.whereToPlace)
+                ))
+
+            createMap(mapper,
+                HoursRecordVO, 
+                HoursRecord,
+                forMember(
+                    (d) => d.id,
+                    mapFrom((s) => s.id)
+                ),
+                forMember(
+                    (d) => d.startTime,
+                    mapFrom((s) => s.startTime)
+                ),
+                forMember(
+                    (d) => d.date,
+                    mapFrom((s) => s.date)
+                ),
+                forMember(
+                    (d) => d.dailyResume,
+                    mapFrom((s) => s.dailyResume)
+                ),
+                forMember(
+                    (d) => d.endTime,
+                    mapFrom((s) => s.endTime)
+                ),
+                forMember(
+                    (d) => d.whereToPlace,
+                    mapFrom((s) => s.whereToPlace)
                 ))
         }
     }
+    
 }

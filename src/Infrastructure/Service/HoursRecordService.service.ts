@@ -39,13 +39,13 @@ export class HoursRecordService extends IHoursRecordService {
             return Result.Ok(response);
         }
         catch (error) {
-            return Result.Fail(ConstantsMessagesHoursRecord.ErrorCreate)
+            return Result.Fail(ConstantsMessagesHoursRecord.ErrorCreate);
         }
     }
     async UpdateAsync(model: HoursRecordVO): Task<Result<HoursRecordVO>> {
         try {
             if (model.id < 0 || model.id == null)
-                return Result.Fail(ConstantsMessagesHoursRecord.ErrorNotFound)
+                return Result.Fail(ConstantsMessagesHoursRecord.ErrorNotFound);
 
             const hoursUpdate = this._mapper.map(model, HoursRecordVO, HoursRecord);
 
