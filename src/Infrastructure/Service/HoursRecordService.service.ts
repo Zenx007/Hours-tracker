@@ -1,7 +1,7 @@
 import { Mapper } from "@automapper/core";
 import { InjectMapper } from "@automapper/nestjs";
 import { Injectable, Res } from "@nestjs/common";
-import { HoursRecordVO } from "src/Communication/ViewObjects/HoursRecord/HoursRecordVO";
+import { HoursRecordSaveVO, HoursRecordVO } from "src/Communication/ViewObjects/HoursRecord/HoursRecordVO";
 import { HoursRecord } from "src/Core/Entities/HoursRecord/HoursRecord.entity";
 import { IHoursRecordRepository } from "src/Core/RepositoriesInterfaces/IHoursRecordRepository.interface";
 import { IHoursRecordService } from "src/Core/ServicesInterfaces/IHoursRecordService.interface";
@@ -26,7 +26,7 @@ export class HoursRecordService extends IHoursRecordService {
         this._hoursRepo = this.hoursRepo;
     }
 
-    async CreateAsync(model: HoursRecordVO): Task<Result<HoursRecordVO>> {
+    async CreateAsync(model: HoursRecordSaveVO): Task<Result<HoursRecordVO>> {
         try {
             const hours = this._mapper.map(model, HoursRecordVO, HoursRecord);
 

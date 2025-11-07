@@ -1,5 +1,5 @@
 import { Response, Request, response } from 'express';
-import { HoursRecordVO } from "src/Communication/ViewObjects/HoursRecord/HoursRecordVO";
+import { HoursRecordSaveVO, HoursRecordVO } from "src/Communication/ViewObjects/HoursRecord/HoursRecordVO";
 import { IHoursRecordService } from "src/Core/ServicesInterfaces/IHoursRecordService.interface";
 import { ConstantsMessagesHoursRecord } from "src/Helpers/ConstantsMessages/ConstantsMessages";
 import { StatusCode, StatusCodes } from "src/Helpers/StatusCode/StatusCode";
@@ -55,10 +55,10 @@ export class HoursRecordController {
 async CreateAsync (
   @Res() res : Response,
   @Req() req : Request,
-  @Body() model : HoursRecordVO,
+  @Body() model : HoursRecordSaveVO,
 )
 {
-  const response = new ApiResponse<HoursRecordVO>();
+  const response = new ApiResponse<HoursRecordSaveVO>();
   try {
     const result = await this._hoursService.CreateAsync(model);
     if(result.isFailed) 
