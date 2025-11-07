@@ -1,6 +1,6 @@
 import { createMap, forMember, mapFrom, Mapper, MappingProfile } from "@automapper/core";
 import { HoursRecord } from "../Entities/HoursRecord/HoursRecord.entity";
-import { HoursRecordVO } from "src/Communication/ViewObjects/HoursRecord/HoursRecordVO";
+import { HoursRecordSaveVO, HoursRecordVO } from "src/Communication/ViewObjects/HoursRecord/HoursRecordVO";
 import { AutomapperProfile, InjectMapper } from "@automapper/nestjs";
 
 export class HoursRecordProfile extends AutomapperProfile {
@@ -36,15 +36,12 @@ export class HoursRecordProfile extends AutomapperProfile {
                 forMember(
                     (d) => d.whereToPlace,
                     mapFrom((s) => s.whereToPlace)
-                ))
+                )).reverse();
+
 
             createMap(mapper,
-                HoursRecordVO, 
-                HoursRecord,
-                forMember(
-                    (d) => d.id,
-                    mapFrom((s) => s.id)
-                ),
+                HoursRecord, 
+                HoursRecordSaveVO,
                 forMember(
                     (d) => d.startTime,
                     mapFrom((s) => s.startTime)
