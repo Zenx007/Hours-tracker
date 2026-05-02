@@ -1,7 +1,4 @@
 import { Db_DataSource } from "./dataSource";
-import { config as dotenvConfig } from 'dotenv';
-
-dotenvConfig({path:".env"})
 
 export const databaseProviders = [
   {
@@ -15,4 +12,3 @@ export const databaseProviders = [
     },
   },
 ];
-

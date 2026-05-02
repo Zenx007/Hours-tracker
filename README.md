@@ -31,6 +31,15 @@
 $ yarn install
 ```
 
+## Docker Compose
+
+```bash
+$ cp .env.example .env
+$ docker compose up --build
+```
+
+The API will be available at `http://localhost:10000/swagger`.
+
 ## Compile and run the project
 
 ```bash

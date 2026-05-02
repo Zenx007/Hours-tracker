@@ -1,0 +1,15 @@
+.DS_Store
+.git
+.next
+.vscode
+coverage
+dist
+logs
+node_modules
+
+.env
+.env.*
+!.env.example
+
+app.config.ts
+*.log

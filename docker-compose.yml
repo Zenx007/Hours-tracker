@@ -1,0 +1,59 @@
+services:
+  api:
+    image: hours-tracker-api
+    build:
+      context: .
+      target: production
+    environment: &api_environment
+      NODE_ENV: production
+      PORT: "10000"
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_USERNAME: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres123}
+      DB_DATABASE: ${POSTGRES_DB:-postgres}
+    ports:
+      - "${APP_PORT:-10000}:10000"
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  migrate:
+    image: hours-tracker-api
+    build:
+      context: .
+      target: production
+    command:
+      - node
+      - ./node_modules/typeorm/cli.js
+      - migration:run
+      - -d
+      - dist/src/Infrastructure/Database/dataSource.js
+    environment: *api_environment
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres123}
+      POSTGRES_DB: ${POSTGRES_DB:-postgres}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  postgres_data:
