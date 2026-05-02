@@ -12,7 +12,7 @@ async function bootstrap() {
 
   app.enableCors({
     origin: [
-      "http://localhost:3000",
+      "http://localhost:5173",
       "http://localhost:3000/",
     ],
     methods: "*",
@@ -26,8 +26,8 @@ async function bootstrap() {
   const staticPath = join(__dirname, "API", "Directory");
   app.use("/static", express.static(staticPath));
 
-  app.use(bodyParser.json({ limit: '2gb' })); // JSON
-  app.use(bodyParser.urlencoded({ limit: '2gb', extended: true })); // URL encoded
+  app.use(bodyParser.json({ limit: '2gb' })); 
+  app.use(bodyParser.urlencoded({ limit: '2gb', extended: true })); 
 
   const config = new DocumentBuilder()
     .setTitle('Hours Tracker')

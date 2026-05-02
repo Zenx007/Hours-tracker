@@ -3,13 +3,11 @@ export class Result<T = unknown> {
     private  _errors: string[] = [];
     private readonly _successMessages: string[] = [];
     private _value: T | null = null;
-  
-    // Construtor privado para controle interno
+
     private constructor(isSuccess: boolean) {
       this._isSuccess = isSuccess;
     }
-  
-    // Criadores estáticos para sucesso e falha
+
     static Ok<T = null>(value: T | null = null): Result<T> {
       const result = new Result<T>(true);
       if (value !== null) {
@@ -24,7 +22,6 @@ export class Result<T = unknown> {
       return result;
     }
   
-    // Adiciona mensagens de sucesso
     withSuccess(message: string): this {
       if (!this._isSuccess) {
         throw new Error('Cannot add success messages to a failed result.');
@@ -33,7 +30,6 @@ export class Result<T = unknown> {
       return this;
     }
   
-    // Adiciona erros
     withError(error: string): this {
       if (this._isSuccess) {
         throw new Error('Cannot add errors to a successful result.');
@@ -42,7 +38,6 @@ export class Result<T = unknown> {
       return this;
     }
   
-    // Obtém o valor associado
     getValue(): T | null {
       if (!this._isSuccess) {
         throw new Error('Cannot retrieve value from a failed result.');

@@ -5,12 +5,13 @@ import { ConstantsMessagesHoursRecord } from "src/Helpers/ConstantsMessages/Cons
 import { StatusCode, StatusCodes } from "src/Helpers/StatusCode/StatusCode";
 import { Body, Controller, Get, Post, Query, Req, Res } from '@nestjs/common';
 import { List } from 'src/Helpers/CustomObjects/List.Interface';
-import { ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { ApiResponse } from "src/Helpers/CustomObjects/ApiResponse.interface";
 import { RESPONSE_PASSTHROUGH_METADATA } from '@nestjs/common/constants';
 import { Stats } from 'fs';
 import { Result } from 'src/Helpers/CustomObjects/Result';
 
+@ApiTags("HoursRecord")
 @Controller("HoursRecord")
 export class HoursRecordController {
   constructor(
