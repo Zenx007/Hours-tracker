@@ -8,7 +8,7 @@ services:
       NODE_ENV: production
       PORT: "10000"
       DB_HOST: db
-      DB_PORT: "5432"
+      DB_PORT: "5"
       DB_USERNAME: ${POSTGRES_USER:-postgres}
       DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres123}
       DB_DATABASE: ${POSTGRES_DB:-postgres}
@@ -45,7 +45,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres123}
       POSTGRES_DB: ${POSTGRES_DB:-postgres}
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - "${POSTGRES_PORT:-5455}:5455"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
