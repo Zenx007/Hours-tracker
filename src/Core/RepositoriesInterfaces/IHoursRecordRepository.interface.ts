@@ -11,4 +11,5 @@ export abstract class IHoursRecordRepository {
     abstract DeleteAsync (id: number): Task<Result>;
     abstract FindByIdAsync (id: number): Task<HoursRecord>;
     abstract FindAllAsync (): Task<List<HoursRecord>>;
+    abstract FindAllByUserIdAsync (userId: number): Task<List<HoursRecord>>;
 }

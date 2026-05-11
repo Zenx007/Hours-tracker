@@ -47,6 +47,7 @@ export class HoursRecordRepository extends IHoursRecordRepository{
         hours.dailyResume = model.dailyResume;
         hours.date = model.date;
         hours.whereToPlace = model.whereToPlace;
+        hours.userId = model.userId;
         hours.updatedAt = new Date();
 
         const saved = await this._hoursDbContext.save(hours);
@@ -78,6 +79,9 @@ export class HoursRecordRepository extends IHoursRecordRepository{
                 where: { disabledAt: IsNull(),
                     id: id,
                 },
+                relations: {
+                    user: true,
+                },
             });
 
             return hours;
@@ -92,6 +96,28 @@ export class HoursRecordRepository extends IHoursRecordRepository{
             const list: List<HoursRecord> = await this._hoursDbContext.find({
                 where: {
                     disabledAt: IsNull(),
+                },
+                relations: {
+                    user: true,
+                },
+            });
+
+            return list;
+        }
+        catch {
+            return null;
+        }
+    }
+
+    async FindAllByUserIdAsync(userId: number): Task<List<HoursRecord>> {
+        try {
+            const list: List<HoursRecord> = await this._hoursDbContext.find({
+                where: {
+                    disabledAt: IsNull(),
+                    userId: userId,
+                },
+                relations: {
+                    user: true,
                 },
             });
 

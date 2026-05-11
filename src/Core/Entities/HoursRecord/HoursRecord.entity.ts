@@ -1,5 +1,6 @@
-import { Entity, BaseEntity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne } from "typeorm";
 import { BaseEntities } from "../BaseEntities/BaseEntities";
+import { User } from "../User/User.entity";
 
 @Entity('HoursRecord')
 export class HoursRecord extends BaseEntities {
@@ -152,4 +153,17 @@ whereToPlace: string;
     nullable: true,
 })
 dailyResume: string;
+
+@Column({
+    name: 'user_id',
+    type: 'int',
+    nullable: true,
+})
+userId: number;
+
+@ManyToOne(() => User, (user) => user.hoursRecords, {
+    nullable: true,
+})
+@JoinColumn({ name: 'user_id' })
+user: User;
 }

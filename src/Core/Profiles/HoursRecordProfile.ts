@@ -37,6 +37,18 @@ export class HoursRecordProfile extends AutomapperProfile {
                 forMember(
                     (d) => d.whereToPlace,
                     mapFrom((s) => s.whereToPlace),
+                ),
+                forMember(
+                    (d) => d.userId,
+                    mapFrom((s) => s.userId),
+                ),
+                forMember(
+                    (d) => d.userName,
+                    mapFrom((s) => s.user?.name),
+                ),
+                forMember(
+                    (d) => d.userEmail,
+                    mapFrom((s) => s.user?.email),
                 ));
 
                 createMap(mapper,
@@ -65,6 +77,10 @@ export class HoursRecordProfile extends AutomapperProfile {
                 forMember(
                     (d) => d.whereToPlace,
                     mapFrom((s) => s.whereToPlace),
+                ),
+                forMember(
+                    (d) => d.userId,
+                    mapFrom((s) => s.userId),
                 ));
 
 
@@ -90,6 +106,10 @@ export class HoursRecordProfile extends AutomapperProfile {
                 forMember(
                     (d) => d.whereToPlace,
                     mapFrom((s) => s.whereToPlace)
+                ),
+                forMember(
+                    (d) => d.userId,
+                    mapFrom((s) => s.userId)
                 ));
 
                 createMap(mapper,
@@ -114,6 +134,10 @@ export class HoursRecordProfile extends AutomapperProfile {
                 forMember(
                     (d) => d.whereToPlace,
                     mapFrom((s) => s.whereToPlace)
+                ),
+                forMember(
+                    (d) => d.userId,
+                    mapFrom((s) => s.userId)
                 ));
         }
     }

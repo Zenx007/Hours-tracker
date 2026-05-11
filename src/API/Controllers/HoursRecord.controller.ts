@@ -1,14 +1,12 @@
-import { Response, Request, response } from 'express';
+import { Response, Request } from 'express';
 import { HoursRecordSaveVO, HoursRecordVO } from "src/Communication/ViewObjects/HoursRecord/HoursRecordVO";
 import { IHoursRecordService } from "src/Core/ServicesInterfaces/IHoursRecordService.interface";
 import { ConstantsMessagesHoursRecord } from "src/Helpers/ConstantsMessages/ConstantsMessages";
 import { StatusCode, StatusCodes } from "src/Helpers/StatusCode/StatusCode";
 import { Body, Controller, Get, Post, Query, Req, Res } from '@nestjs/common';
 import { List } from 'src/Helpers/CustomObjects/List.Interface';
-import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { ApiResponse } from "src/Helpers/CustomObjects/ApiResponse.interface";
-import { RESPONSE_PASSTHROUGH_METADATA } from '@nestjs/common/constants';
-import { Stats } from 'fs';
 import { Result } from 'src/Helpers/CustomObjects/Result';
 
 @ApiTags("HoursRecord")
@@ -48,8 +46,41 @@ export class HoursRecordController {
         res,
         StatusCodes.STATUS_500_INTERNAL_SERVER_ERROR,
         response);
-    }
+  }
 }
+
+  @ApiOperation({ summary: 'GetAllByUserId - Lista todos os registros de hora de um usuario' })
+  @Get('GetAllByUserId')
+  async GetAllByUserIdAsync(
+    @Res() res: Response,
+    @Req() req: Request,
+    @Query('userId') userId: number) {
+    const response = new ApiResponse<List<HoursRecordVO>>();
+    try {
+
+      const list = await this._hoursService.GetAllByUserId(userId);
+      if (list.isFailed) {
+        response.success = false;
+        response.message = list.errors.toString();
+        return StatusCode(res, StatusCodes.STATUS_404_NOT_FOUND, response);
+      }
+
+      response.success = true;
+      response.object = list.value;
+
+      return StatusCode(res, StatusCodes.STATUS_200_OK, response);
+
+    }
+    catch (error) {
+
+      response.success = false;
+      response.message = ConstantsMessagesHoursRecord.ErrorGetAll;
+      return StatusCode(
+        res,
+        StatusCodes.STATUS_500_INTERNAL_SERVER_ERROR,
+        response);
+    }
+  }
 
 @ApiOperation({summary: 'Create - Cria um novo registro de horas'})
 @Post('Create')
@@ -65,7 +96,7 @@ async CreateAsync (
     if(result.isFailed) 
       {
       response.object = null,
-      response.message = ConstantsMessagesHoursRecord.ErrorCreate,
+      response.message = result.errors.toString(),
       response.success = false;
 
       return StatusCode(res, StatusCodes.STATUS_400_BAD_REQUEST, response);
@@ -100,7 +131,7 @@ async PrepareAsync (
 
     if(result.isFailed) {
       response.object = null,
-      response.message = ConstantsMessagesHoursRecord.ErrorPrepare;
+      response.message = result.errors.toString();
       response.success = false;
 
       return StatusCode(res, StatusCodes.STATUS_400_BAD_REQUEST, response);
@@ -133,10 +164,10 @@ async UpdateAsync(
 
     if(result.isFailed) {
       response.object = null,
-      response.message = ConstantsMessagesHoursRecord.ErrorUpdate,
+      response.message = result.errors.toString(),
       response.success = false;
 
-      return StatusCode(res, StatusCodes.STATUS_400_BAD_REQUEST)
+      return StatusCode(res, StatusCodes.STATUS_400_BAD_REQUEST, response)
     }
 
     response.object = result.value,
@@ -167,7 +198,7 @@ async DeleteAsync (
 
     if(result.isFailed) {
       response.object = null,
-      response.message = ConstantsMessagesHoursRecord.ErrorDelete;
+      response.message = result.errors.toString();
       response.success = false;
 
       return StatusCode(res, StatusCodes.STATUS_400_BAD_REQUEST, response);
@@ -187,4 +218,3 @@ async DeleteAsync (
   }
 }
 }
-

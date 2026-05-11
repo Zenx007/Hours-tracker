@@ -29,6 +29,18 @@ export class HoursRecordVO {
     @ApiProperty()
     @NameColumn("Resumo para a daily")
     dailyResume: string;
+
+    @ApiProperty()
+    @NameColumn("Id do usuário")
+    userId: number;
+
+    @ApiProperty()
+    @NameColumn("Nome do usuário")
+    userName: string;
+
+    @ApiProperty()
+    @NameColumn("E-mail do usuário")
+    userEmail: string;
 }
 
 export class HoursRecordSaveVO {
@@ -56,4 +68,8 @@ export class HoursRecordSaveVO {
     @ApiProperty()
     @NameColumn("Resumo para a daily")
     dailyResume: string;
+
+    @ApiProperty()
+    @NameColumn("Id do usuário")
+    userId: number;
 }

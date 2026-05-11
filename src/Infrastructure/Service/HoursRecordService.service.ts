@@ -1,9 +1,10 @@
 import { Mapper } from "@automapper/core";
 import { InjectMapper } from "@automapper/nestjs";
-import { Injectable, Res } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { HoursRecordSaveVO, HoursRecordVO } from "src/Communication/ViewObjects/HoursRecord/HoursRecordVO";
 import { HoursRecord } from "src/Core/Entities/HoursRecord/HoursRecord.entity";
 import { IHoursRecordRepository } from "src/Core/RepositoriesInterfaces/IHoursRecordRepository.interface";
+import { IUserRepository } from "src/Core/RepositoriesInterfaces/IUserRepository.interface";
 import { IHoursRecordService } from "src/Core/ServicesInterfaces/IHoursRecordService.interface";
 import { ConstantsMessagesHoursRecord } from "src/Helpers/ConstantsMessages/ConstantsMessages";
 import { List } from "src/Helpers/CustomObjects/List.Interface";
@@ -13,10 +14,12 @@ import { Task } from "src/Helpers/CustomObjects/Task.Interface";
 @Injectable()
 export class HoursRecordService extends IHoursRecordService {
     private readonly _hoursRepo: IHoursRecordRepository;
+    private readonly _userRepo: IUserRepository;
     private readonly _mapper: Mapper;
     
     constructor(
         private readonly hoursRepo: IHoursRecordRepository,
+        private readonly userRepo: IUserRepository,
         @InjectMapper()
         private readonly mapper: Mapper,
 
@@ -24,16 +27,25 @@ export class HoursRecordService extends IHoursRecordService {
         super();
         this._mapper = this.mapper;
         this._hoursRepo = this.hoursRepo;
+        this._userRepo = this.userRepo;
     }
 
     async CreateAsync(model: HoursRecordSaveVO): Task<Result<HoursRecordVO>> {
         try {
-            const hours = this._mapper.map(model, HoursRecordVO, HoursRecord);
+            if (model.userId == null || model.userId <= 0)
+                return Result.Fail(ConstantsMessagesHoursRecord.ErrorUserRequired);
+
+            const user = await this._userRepo.FindByIdAsync(model.userId);
+            if (user == null)
+                return Result.Fail(ConstantsMessagesHoursRecord.ErrorUserNotFound);
+
+            const hours = this._mapper.map(model, HoursRecordSaveVO, HoursRecord);
 
             const saved = await this._hoursRepo.InsertAsync(hours);
             if (saved.isFailed)
                 return Result.Fail(ConstantsMessagesHoursRecord.ErrorCreate);
 
+            saved.value.user = user;
             const response = this._mapper.map(saved.value, HoursRecord, HoursRecordVO);
 
             return Result.Ok(response);
@@ -47,12 +59,20 @@ export class HoursRecordService extends IHoursRecordService {
             if (model.id < 0 || model.id == null)
                 return Result.Fail(ConstantsMessagesHoursRecord.ErrorNotFound);
 
+            if (model.userId == null || model.userId <= 0)
+                return Result.Fail(ConstantsMessagesHoursRecord.ErrorUserRequired);
+
+            const user = await this._userRepo.FindByIdAsync(model.userId);
+            if (user == null)
+                return Result.Fail(ConstantsMessagesHoursRecord.ErrorUserNotFound);
+
             const hoursUpdate = this._mapper.map(model, HoursRecordVO, HoursRecord);
 
             const update = await this._hoursRepo.UpdateAsync(hoursUpdate);
             if (update.isFailed)
                 return Result.Fail(ConstantsMessagesHoursRecord.ErrorPut);
 
+            update.value.user = user;
             const response = this._mapper.map(update.value, HoursRecord, HoursRecordVO)
 
             return Result.Ok(response)
@@ -97,6 +117,28 @@ export class HoursRecordService extends IHoursRecordService {
     async GetAll(): Task<Result<List<HoursRecordVO>>> {
         try {
             const list: List<HoursRecord> = await this._hoursRepo.FindAllAsync();
+            if(list == null)
+                return Result.Fail(ConstantsMessagesHoursRecord.ErrorGetAll)
+
+            const response = this._mapper.mapArray(list, HoursRecord, HoursRecordVO);
+
+            return Result.Ok(response);
+        }
+        catch(error) {
+            return Result.Fail(ConstantsMessagesHoursRecord.ErrorGetAll)
+        }
+    }
+
+    async GetAllByUserId(userId: number): Task<Result<List<HoursRecordVO>>> {
+        try {
+            if (userId == null || userId <= 0)
+                return Result.Fail(ConstantsMessagesHoursRecord.ErrorUserRequired);
+
+            const user = await this._userRepo.FindByIdAsync(userId);
+            if (user == null)
+                return Result.Fail(ConstantsMessagesHoursRecord.ErrorUserNotFound);
+
+            const list: List<HoursRecord> = await this._hoursRepo.FindAllByUserIdAsync(userId);
             if(list == null)
                 return Result.Fail(ConstantsMessagesHoursRecord.ErrorGetAll)
 
