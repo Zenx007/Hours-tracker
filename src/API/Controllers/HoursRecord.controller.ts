@@ -1,30 +1,39 @@
 import { Response, Request } from 'express';
-import { HoursRecordSaveVO, HoursRecordVO } from "src/Communication/ViewObjects/HoursRecord/HoursRecordVO";
-import { IHoursRecordService } from "src/Core/ServicesInterfaces/IHoursRecordService.interface";
-import { ConstantsMessagesHoursRecord } from "src/Helpers/ConstantsMessages/ConstantsMessages";
-import { StatusCode, StatusCodes } from "src/Helpers/StatusCode/StatusCode";
-import { Body, Controller, Get, Post, Query, Req, Res } from '@nestjs/common';
+import {
+  HoursRecordSaveVO,
+  HoursRecordVO,
+} from 'src/Communication/ViewObjects/HoursRecord/HoursRecordVO';
+import { IHoursRecordService } from 'src/Core/ServicesInterfaces/IHoursRecordService.interface';
+import { ConstantsMessagesHoursRecord } from 'src/Helpers/ConstantsMessages/ConstantsMessages';
+import { StatusCode, StatusCodes } from 'src/Helpers/StatusCode/StatusCode';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { List } from 'src/Helpers/CustomObjects/List.Interface';
-import { ApiOperation, ApiTags } from "@nestjs/swagger";
-import { ApiResponse } from "src/Helpers/CustomObjects/ApiResponse.interface";
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiResponse } from 'src/Helpers/CustomObjects/ApiResponse.interface';
 import { Result } from 'src/Helpers/CustomObjects/Result';
+import { JwtAuthGuard } from 'src/API/Guards/JwtAuthGuard';
 
-@ApiTags("HoursRecord")
-@Controller("HoursRecord")
+@ApiTags('HoursRecord')
+@ApiBearerAuth('authorization')
+@UseGuards(JwtAuthGuard)
+@Controller('HoursRecord')
 export class HoursRecordController {
-  constructor(
-    private readonly _hoursService: IHoursRecordService,
-
-  ) { }
+  constructor(private readonly _hoursService: IHoursRecordService) {}
 
   @ApiOperation({ summary: 'Getall - Lista todos os registros de hora' })
   @Get('GetAll')
-  async GetAllAsync(
-    @Res() res: Response,
-    @Req() req: Request) {
+  async GetAllAsync(@Res() res: Response, @Req() req: Request) {
     const response = new ApiResponse<List<HoursRecordVO>>();
     try {
- 
       const list = await this._hoursService.GetAll();
       if (list.isFailed) {
         response.success = false;
@@ -36,28 +45,28 @@ export class HoursRecordController {
       response.object = list.value;
 
       return StatusCode(res, StatusCodes.STATUS_200_OK, response);
-
-    }
-    catch (error) {
-   
+    } catch (error) {
       response.success = false;
       response.message = ConstantsMessagesHoursRecord.ErrorGetAll;
       return StatusCode(
         res,
         StatusCodes.STATUS_500_INTERNAL_SERVER_ERROR,
-        response);
+        response,
+      );
+    }
   }
-}
 
-  @ApiOperation({ summary: 'GetAllByUserId - Lista todos os registros de hora de um usuario' })
+  @ApiOperation({
+    summary: 'GetAllByUserId - Lista todos os registros de hora de um usuario',
+  })
   @Get('GetAllByUserId')
   async GetAllByUserIdAsync(
     @Res() res: Response,
     @Req() req: Request,
-    @Query('userId') userId: number) {
+    @Query('userId') userId: number,
+  ) {
     const response = new ApiResponse<List<HoursRecordVO>>();
     try {
-
       const list = await this._hoursService.GetAllByUserId(userId);
       if (list.isFailed) {
         response.success = false;
@@ -69,152 +78,149 @@ export class HoursRecordController {
       response.object = list.value;
 
       return StatusCode(res, StatusCodes.STATUS_200_OK, response);
-
-    }
-    catch (error) {
-
+    } catch (error) {
       response.success = false;
       response.message = ConstantsMessagesHoursRecord.ErrorGetAll;
       return StatusCode(
         res,
         StatusCodes.STATUS_500_INTERNAL_SERVER_ERROR,
-        response);
+        response,
+      );
     }
   }
 
-@ApiOperation({summary: 'Create - Cria um novo registro de horas'})
-@Post('Create')
-async CreateAsync (
-  @Res() res : Response,
-  @Req() req : Request,
-  @Body() model : HoursRecordSaveVO,
-)
-{
-  const response = new ApiResponse<HoursRecordSaveVO>();
-  try {
-    const result = await this._hoursService.CreateAsync(model);
-    if(result.isFailed) 
-      {
-      response.object = null,
-      response.message = result.errors.toString(),
-      response.success = false;
+  @ApiOperation({ summary: 'Create - Cria um novo registro de horas' })
+  @Post('Create')
+  async CreateAsync(
+    @Res() res: Response,
+    @Req() req: Request,
+    @Body() model: HoursRecordSaveVO,
+  ) {
+    const response = new ApiResponse<HoursRecordSaveVO>();
+    try {
+      const result = await this._hoursService.CreateAsync(model);
+      if (result.isFailed) {
+        ((response.object = null),
+          (response.message = result.errors.toString()),
+          (response.success = false));
+
+        return StatusCode(res, StatusCodes.STATUS_400_BAD_REQUEST, response);
+      }
+
+      ((response.object = result.value), (response.success = true));
+
+      return StatusCode(res, StatusCodes.STATUS_201_CREATED, response);
+    } catch (error) {
+      ((response.object = null),
+        (response.message = ConstantsMessagesHoursRecord.ErrorCreate),
+        (response.success = false));
+
+      return StatusCode(
+        res,
+        StatusCodes.STATUS_500_INTERNAL_SERVER_ERROR,
+        response,
+      );
+    }
+  }
+
+  @ApiOperation({
+    summary: 'Prepare - Metodo que prepara um registro de horas',
+  })
+  @Get('Prepare')
+  async PrepareAsync(
+    @Res() res: Response,
+    @Req() req: Request,
+    @Query('id') id: number,
+  ) {
+    const response = new ApiResponse<HoursRecordVO>();
+    try {
+      const result = await this._hoursService.GetById(id);
+
+      if (result.isFailed) {
+        ((response.object = null),
+          (response.message = result.errors.toString()));
+        response.success = false;
+
+        return StatusCode(res, StatusCodes.STATUS_400_BAD_REQUEST, response);
+      }
+
+      ((response.object = result.value), (response.success = true));
+
+      return StatusCode(res, StatusCodes.STATUS_200_OK, response);
+    } catch (error) {
+      ((response.message = ConstantsMessagesHoursRecord.ErrorPrepare),
+        (response.object = null),
+        (response.success = false));
 
       return StatusCode(res, StatusCodes.STATUS_400_BAD_REQUEST, response);
     }
-
-    response.object = result.value,
-    response.success = true;
-
-    return StatusCode(res, StatusCodes.STATUS_201_CREATED, response);
   }
-  catch(error) {
 
-    response.object = null,
-    response.message = ConstantsMessagesHoursRecord.ErrorCreate,
-    response.success = false;
+  @ApiOperation({
+    summary: 'Update - Metodo que atualiza um registro de horas',
+  })
+  @Post('Update')
+  async UpdateAsync(
+    @Res() res: Response,
+    @Req() req: Request,
+    @Body() model: HoursRecordVO,
+  ) {
+    const response = new ApiResponse<HoursRecordVO>();
+    try {
+      const result = await this._hoursService.UpdateAsync(model);
 
-    return StatusCode(res, StatusCodes.STATUS_500_INTERNAL_SERVER_ERROR, response);
-  }
-}
+      if (result.isFailed) {
+        ((response.object = null),
+          (response.message = result.errors.toString()),
+          (response.success = false));
 
-@ApiOperation({summary: 'Prepare - Metodo que prepara um registro de horas'})
-@Get('Prepare')
-async PrepareAsync (
-  @Res() res : Response,
-  @Req() req : Request,
-  @Query('id') id : number,
-)
-{
-  const response = new ApiResponse<HoursRecordVO>();
-  try {
-    const result = await this._hoursService.GetById(id);
+        return StatusCode(res, StatusCodes.STATUS_400_BAD_REQUEST, response);
+      }
 
-    if(result.isFailed) {
-      response.object = null,
-      response.message = result.errors.toString();
+      ((response.object = result.value), (response.success = true));
+
+      return StatusCode(res, StatusCodes.STATUS_200_OK, response);
+    } catch (error) {
+      ((response.object = null),
+        (response.message = ConstantsMessagesHoursRecord.ErrorUpdate));
       response.success = false;
+
+      return StatusCode(
+        res,
+        StatusCodes.STATUS_500_INTERNAL_SERVER_ERROR,
+        response,
+      );
+    }
+  }
+
+  @ApiOperation({ summary: 'Delete - Metodo que deleta um registro de hora' })
+  @Get('Delete')
+  async DeleteAsync(
+    @Res() res: Response,
+    @Req() req: Request,
+    @Query('id') id: number,
+  ) {
+    const response = new ApiResponse<Result>();
+    try {
+      const result = await this._hoursService.DeleteAsync(id);
+
+      if (result.isFailed) {
+        ((response.object = null),
+          (response.message = result.errors.toString()));
+        response.success = false;
+
+        return StatusCode(res, StatusCodes.STATUS_400_BAD_REQUEST, response);
+      }
+
+      ((response.object = result), (response.success = true));
+
+      return StatusCode(res, StatusCodes.STATUS_200_OK, response);
+    } catch (error) {
+      ((response.message = ConstantsMessagesHoursRecord.ErrorDelete),
+        (response.object = null),
+        (response.success = false));
 
       return StatusCode(res, StatusCodes.STATUS_400_BAD_REQUEST, response);
     }
-
-    response.object = result.value,
-    response.success = true;
-
-    return StatusCode(res, StatusCodes.STATUS_200_OK, response);
   }
-  catch(error) {
-    response.message = ConstantsMessagesHoursRecord.ErrorPrepare,
-    response.object = null,
-    response.success = false;
-
-    return StatusCode(res, StatusCodes.STATUS_400_BAD_REQUEST, response);
-  }
-}
-
-@ApiOperation({summary: 'Update - Metodo que atualiza um registro de horas'})
-@Post('Update')
-async UpdateAsync(
-  @Res () res : Response,
-  @Req () req : Request,
-  @Body() model: HoursRecordVO,
-) {
-  const response = new ApiResponse<HoursRecordVO>();
-  try {
-    const result = await this._hoursService.UpdateAsync(model);
-
-    if(result.isFailed) {
-      response.object = null,
-      response.message = result.errors.toString(),
-      response.success = false;
-
-      return StatusCode(res, StatusCodes.STATUS_400_BAD_REQUEST, response)
-    }
-
-    response.object = result.value,
-    response.success = true;
-
-    return StatusCode(res, StatusCodes.STATUS_200_OK, response);
-  }
-  catch(error) {
-    response.object = null,
-    response.message = ConstantsMessagesHoursRecord.ErrorUpdate;
-    response.success = false;
-
-    return StatusCode(res, StatusCodes.STATUS_500_INTERNAL_SERVER_ERROR, response);
-  }
-}
-
-@ApiOperation({summary: 'Delete - Metodo que deleta um registro de hora'})
-@Get('Delete')
-async DeleteAsync (
-  @Res() res : Response,
-  @Req() req : Request,
-  @Query('id') id : number,
-)
-{
-  const response = new ApiResponse<Result>();
-  try {
-    const result = await this._hoursService.DeleteAsync(id);
-
-    if(result.isFailed) {
-      response.object = null,
-      response.message = result.errors.toString();
-      response.success = false;
-
-      return StatusCode(res, StatusCodes.STATUS_400_BAD_REQUEST, response);
-    }
-
-    response.object = result,
-    response.success = true;
-
-    return StatusCode(res, StatusCodes.STATUS_200_OK, response);
-  }
-  catch(error) {
-    response.message = ConstantsMessagesHoursRecord.ErrorDelete,
-    response.object = null,
-    response.success = false;
-
-    return StatusCode(res, StatusCodes.STATUS_400_BAD_REQUEST, response);
-  }
-}
 }
