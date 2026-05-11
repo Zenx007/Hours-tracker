@@ -5,6 +5,33 @@ import * as bodyParser from 'body-parser';
 import * as express from 'express';
 import { join } from 'path';
 
+function buildSwaggerHtml(title: string, jsonUrl: string) {
+  return `
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>${title}</title>
+    <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css" />
+  </head>
+  <body>
+    <div id="swagger-ui"></div>
+    <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+    <script>
+      window.onload = () => {
+        window.ui = SwaggerUIBundle({
+          url: '${jsonUrl}',
+          dom_id: '#swagger-ui',
+          persistAuthorization: true,
+          tagsSorter: 'alpha'
+        });
+      };
+    </script>
+  </body>
+</html>`;
+}
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const port = process.env.PORT || 10000;
@@ -43,24 +70,25 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
 
-  const swaggerOptions = {
-    customSiteTitle: 'Hours Tracker API',
-    jsonDocumentUrl: 'swagger-json',
-    swaggerOptions: {
-      url: '/swagger-json',
-      tagsSorter: "alpha",
-      persistAuthorization: true,
-    },
-  };
+  const server = app.getHttpAdapter().getInstance();
 
-  SwaggerModule.setup('swagger', app, document, swaggerOptions);
-  SwaggerModule.setup('docs', app, document, {
-    ...swaggerOptions,
-    jsonDocumentUrl: 'docs-json',
-    swaggerOptions: {
-      ...swaggerOptions.swaggerOptions,
-      url: '/docs-json',
-    },
+  server.get(['/swagger-json', '/docs-json'], (_req: express.Request, res: express.Response) => {
+    res.type('application/json').send(document);
+  });
+
+  server.get(['/swagger', '/swagger/'], (_req: express.Request, res: express.Response) => {
+    res.type('text/html').send(buildSwaggerHtml('Hours Tracker API', '/swagger-json'));
+  });
+
+  server.get(['/docs', '/docs/'], (_req: express.Request, res: express.Response) => {
+    res.type('text/html').send(buildSwaggerHtml('Hours Tracker API', '/docs-json'));
+  });
+
+  server.get('/health', (_req: express.Request, res: express.Response) => {
+    res.status(200).json({
+      success: true,
+      message: 'API Hours Tracker rodando corretamente.',
+    });
   });
 
   await app.listen(port, '0.0.0.0');
