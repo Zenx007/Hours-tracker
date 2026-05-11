@@ -1,7 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { DocumentBuilder } from '@nestjs/swagger/dist/document-builder';
-import { SwaggerModule } from '@nestjs/swagger/dist/swagger-module';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as bodyParser from 'body-parser';
 import * as express from 'express';
 import { join } from 'path';
@@ -42,12 +41,15 @@ async function bootstrap() {
     },"authorization") 
     .build();
 
-    const documentFactory = () => SwaggerModule.createDocument(app, config);
+  const documentFactory = () => SwaggerModule.createDocument(app, config);
 
   SwaggerModule.setup('swagger', app, documentFactory, {
+    customSiteTitle: 'Hours Tracker API',
+    jsonDocumentUrl: 'swagger-json',
     swaggerOptions: {
-      tagsSorter: "alpha"
-    }
+      tagsSorter: "alpha",
+      persistAuthorization: true,
+    },
   });
 
   await app.listen(port);
