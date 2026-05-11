@@ -41,20 +41,31 @@ async function bootstrap() {
     },"authorization") 
     .build();
 
-  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  const document = SwaggerModule.createDocument(app, config);
 
-  SwaggerModule.setup('swagger', app, documentFactory, {
+  const swaggerOptions = {
     customSiteTitle: 'Hours Tracker API',
     jsonDocumentUrl: 'swagger-json',
     swaggerOptions: {
+      url: '/swagger-json',
       tagsSorter: "alpha",
       persistAuthorization: true,
     },
+  };
+
+  SwaggerModule.setup('swagger', app, document, swaggerOptions);
+  SwaggerModule.setup('docs', app, document, {
+    ...swaggerOptions,
+    jsonDocumentUrl: 'docs-json',
+    swaggerOptions: {
+      ...swaggerOptions.swaggerOptions,
+      url: '/docs-json',
+    },
   });
 
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
 
-  console.log(`Seja Bem Vindo: Acesse http://localhost:${port}/swagger`)
+  console.log(`Seja Bem Vindo: Acesse http://localhost:${port}/swagger ou /docs`)
 
   }
 

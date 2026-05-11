@@ -20,10 +20,11 @@ describe('AppController (e2e)', () => {
     return request(app.getHttpServer())
       .get('/')
       .expect(200)
-      .expect({
-        success: true,
-        message: 'API Hours Tracker rodando corretamente.',
-        swagger: '/swagger',
+      .expect(({ body }) => {
+        expect(body.success).toBe(true);
+        expect(body.message).toBe('API Hours Tracker rodando corretamente.');
+        expect(body.swagger).toContain('/swagger');
+        expect(body.docs).toContain('/docs');
       });
   });
 });
