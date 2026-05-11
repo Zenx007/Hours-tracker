@@ -23,6 +23,7 @@ import { Task } from 'src/Helpers/CustomObjects/Task.Interface';
 export class UserService extends IUserService {
   private readonly _userRepo: IUserRepository;
   private readonly _mapper: Mapper;
+  private readonly emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   constructor(
     private readonly userRepo: IUserRepository,
@@ -35,12 +36,25 @@ export class UserService extends IUserService {
     this._userRepo = this.userRepo;
   }
 
+  private NormalizeEmail(email: string): string {
+    return email?.trim().toLowerCase();
+  }
+
+  private IsEmailValid(email: string): boolean {
+    return this.emailRegex.test(this.NormalizeEmail(email));
+  }
+
   async CreateAsync(model: UserSaveVO): Task<Result<UserVO>> {
     try {
       if (!model?.email || !model?.name || !model?.password)
         return Result.Fail(
           ConstantsMessagesUser.ErrorRequiredFieldsWithPassword,
         );
+
+      if (!this.IsEmailValid(model.email))
+        return Result.Fail(ConstantsMessagesUser.ErrorInvalidEmail);
+
+      model.email = this.NormalizeEmail(model.email);
 
       const existentUser = await this._userRepo.FindByEmailAsync(model.email);
       if (existentUser != null)
@@ -68,6 +82,11 @@ export class UserService extends IUserService {
       if (!model?.email || !model?.name)
         return Result.Fail(ConstantsMessagesUser.ErrorRequiredFields);
 
+      if (!this.IsEmailValid(model.email))
+        return Result.Fail(ConstantsMessagesUser.ErrorInvalidEmail);
+
+      model.email = this.NormalizeEmail(model.email);
+
       const existentUser = await this._userRepo.FindByEmailAsync(model.email);
       if (existentUser != null && existentUser.id !== model.id)
         return Result.Fail(ConstantsMessagesUser.ErrorEmailAlreadyExists);
@@ -92,6 +111,11 @@ export class UserService extends IUserService {
     try {
       if (!model?.email || !model?.password)
         return Result.Fail(ConstantsMessagesUser.ErrorLogin);
+
+      if (!this.IsEmailValid(model.email))
+        return Result.Fail(ConstantsMessagesUser.ErrorLogin);
+
+      model.email = this.NormalizeEmail(model.email);
 
       const user = await this._userRepo.FindByEmailWithPasswordAsync(
         model.email,

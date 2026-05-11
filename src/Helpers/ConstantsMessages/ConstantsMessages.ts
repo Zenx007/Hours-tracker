@@ -30,6 +30,7 @@ export const ConstantsMessagesUser = {
   ErrorGetAll: 'Erro ao encontrar a lista de usuarios',
   ErrorNotFound: 'Erro, o usuario não existe',
   ErrorEmailAlreadyExists: 'Erro, já existe um usuario com este e-mail',
+  ErrorInvalidEmail: 'Erro, o e-mail informado é inválido',
   ErrorRequiredFields: 'Erro, nome e e-mail são obrigatórios',
   ErrorRequiredFieldsWithPassword:
     'Erro, nome, e-mail e senha são obrigatórios',
